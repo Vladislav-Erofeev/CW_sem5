@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  db1:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=db
+
+  db2:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=db
+
+  auth:
+    build: ./
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db1:5432/db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+    ports:
+      - "9000:8080"
+
+  back:
+    build: ../MusicStore-CW-Sem4/.
+    volumes:
+      - ./temp:/upload
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db2:5432/db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - UPLOAD_DIRECTORY=/upload
+    ports:
+      - "8080:8080"
